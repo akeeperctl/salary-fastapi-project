@@ -1,6 +1,4 @@
-from typing import List
-
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String, JSON
 
 from src.models import Base
 
@@ -10,4 +8,5 @@ class Role(Base):
 
     id: int = Column(Integer, primary_key=True, autoincrement=True)
     title: str = Column(String, nullable=False, index=True)
-    permissions: List = Column(List, default=[], nullable=False)
+    permissions: list = Column(JSON, default=[], nullable=False,
+                               comment="example: [perm1, perm2, perm3]. All perm's is string")
