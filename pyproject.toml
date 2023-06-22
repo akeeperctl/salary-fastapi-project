@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "shift-fastapi-project"
+version = "0.1.0"
+description = "My fast-api application"
+authors = ["Daniel <d.akipskiy@gmail.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "shift_fastapi_project"}]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+requests = "^2.31.0"
+fastapi = "^0.97.0"
+fastapi-users-db-sqlalchemy = "^5.0.0"
+sqlalchemy = "^2.0.16"
+alembic = {extras = ["sqlalchemy"], version = "^1.11.1"}
+fastapi-users = "^11.0.0"
+httpx = "^0.24.1"
+asyncpg = "^0.27.0"
+fastapi-cache2 = {extras = ["redis"], version = "^0.2.1"}
+gunicorn = "^19"
+python-dotenv = "^1.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.3.2"
+pytest-asyncio = "^0.21.0"
+uvicorn = "^0.22.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
