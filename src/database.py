@@ -2,8 +2,7 @@ from typing import AsyncGenerator
 
 from fastapi import Depends
 from fastapi_users_db_sqlalchemy import SQLAlchemyUserDatabase
-from sqlalchemy import create_engine
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import sessionmaker
 
 from src.auth.models import Employee
@@ -11,7 +10,7 @@ from src.auth.models import Employee
 # DATABASE_URL = "postgresql://user:password@postgresserver/db"
 DATABASE_URL = "postgresql+asyncpg://postgres:postgres@localhost/shift-project-db"
 
-engine = create_engine(DATABASE_URL)
+engine = create_async_engine(DATABASE_URL)
 async_session_maker = sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
