@@ -1,5 +1,7 @@
+from datetime import datetime
+
 from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
-from sqlalchemy import Column, String, Boolean, Integer, ForeignKey
+from sqlalchemy import Column, String, Boolean, Integer, ForeignKey, TIMESTAMP
 
 from src.job.models import Job
 from src.role.models import Role
@@ -20,6 +22,10 @@ class Employee(SQLAlchemyBaseUserTable[int], Base):
     username: str = Column(String, index=True, nullable=False)
     firstname: str = Column(String, index=True, nullable=False)
     lastname: str = Column(String, index=True, nullable=False)
+
+    signed_at: datetime = Column(TIMESTAMP, index=True, nullable=False)
+    last_promotion: datetime = Column(TIMESTAMP, nullable=False)
+    next_promotion: datetime = Column(TIMESTAMP, nullable=False)
 
     email: str = Column(String(length=320), unique=True, index=True, nullable=False)
     hashed_password: str = Column(String(length=1024), nullable=False)

@@ -7,5 +7,6 @@ class Job(Base):
     __tablename__ = "job"
 
     id: int = Column(Integer, primary_key=True, autoincrement=True)
-    title: str = Column(String, nullable=False, index=True)
+    salary: int = Column(Integer, index=True, nullable=False, default=15000)
+    title: str = Column(String, index=True, nullable=False)
     description: str = Column(String, nullable=True)
