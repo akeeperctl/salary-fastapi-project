@@ -17,7 +17,6 @@ class JobCreate(BaseModel):
 
 
 class JobUpdate(BaseModel):
-    id: int
-    salary: Optional[int]
+    salary: Optional[int] = Field(ge=15000)
     title: Optional[str]
     description: Optional[str]

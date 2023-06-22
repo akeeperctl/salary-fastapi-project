@@ -39,9 +39,9 @@ class EmployeeCreate(schemas.BaseUserCreate):
     firstname: str = Field(min_length=3, max_length=15)
     lastname: str = Field(min_length=3, max_length=15)
 
-    signed_at: datetime = utcnow
-    last_promotion: datetime = utcnow
-    next_promotion: datetime = utcnow + timedelta(days=365)
+    # signed_at: datetime = utcnow
+    # last_promotion: datetime = utcnow
+    # next_promotion: datetime = utcnow + timedelta(days=365)
 
     email: EmailStr
     password: str = Field(min_length=8)
