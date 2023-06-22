@@ -6,7 +6,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import sessionmaker
 
-from auth.models import User
+from src.auth.models import Employee
 
 # DATABASE_URL = "postgresql://user:password@postgresserver/db"
 DATABASE_URL = "postgresql+asyncpg://postgres:postgres@localhost/shift-project-db"
@@ -21,4 +21,4 @@ async def get_async_session() -> AsyncGenerator[AsyncSession, None]:
 
 
 async def get_user_db(session: AsyncSession = Depends(get_async_session)):
-    yield SQLAlchemyUserDatabase(session, User)
+    yield SQLAlchemyUserDatabase(session, Employee)
