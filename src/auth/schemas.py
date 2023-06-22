@@ -5,7 +5,8 @@ from fastapi_users import schemas
 from pydantic import EmailStr, Field
 
 
-utcnow = datetime.utcnow().isoformat(sep='_', timespec='minutes')
+#utcnow = datetime.utcnow().isoformat(sep='_', timespec='minutes')
+utcnow = datetime.utcnow()
 
 
 class EmployeeRead(schemas.BaseUser[int]):

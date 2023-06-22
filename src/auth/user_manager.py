@@ -3,6 +3,7 @@ from typing import Optional, Union
 from fastapi import Depends, Request
 from fastapi_users import BaseUserManager, IntegerIDMixin, InvalidPasswordException
 
+from src.auth.schemas import EmployeeCreate
 from src.config import SECRET, TOKEN_RESET_PASSWORD_LIFETIME, TOKEN_VERIFICATION_LIFETIME
 from src.database import get_user_db
 from src.auth.models import Employee
@@ -15,9 +16,9 @@ class UserManager(IntegerIDMixin, BaseUserManager[Employee, int]):
     verification_token_lifetime_seconds = TOKEN_VERIFICATION_LIFETIME
 
     async def validate_password(
-        self,
-        password: str,
-        user: Union[UserCreate, Employee],
+            self,
+            password: str,
+            user: Union[EmployeeCreate, Employee],
     ) -> None:
         if len(password) < 8:
             raise InvalidPasswordException(
@@ -34,6 +35,8 @@ class UserManager(IntegerIDMixin, BaseUserManager[Employee, int]):
 
     async def on_after_register(self, user: Employee, request: Optional[Request] = None):
         print(f"SERVER: User {user.id} has registered.")
+
+        # todo: сюда добавить значения в БД: signed_at, last_promotion, next_promotion
 
     async def on_after_forgot_password(
             self, user: Employee, token: str, request: Optional[Request] = None
