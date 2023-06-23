@@ -9,3 +9,4 @@ app_users = FastAPIUsers(
 )
 
 CURRENT_USER = app_users.current_user()
+CURRENT_USER_SUPERUSER = app_users.current_user(superuser=True)

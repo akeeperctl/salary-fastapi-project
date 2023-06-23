@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from src.main_users import CURRENT_USER
+from src.main_users import CURRENT_USER, CURRENT_USER_SUPERUSER
 from src.exceptions import ShiftHTTPException
 from src.database import get_async_session, store_exact_data_from_db, store_data_from_db
 from src.job.models import Job as JobModel
@@ -21,15 +21,7 @@ job_router = APIRouter(
 
 @job_router.post(path="/add", description="Add new job to database. Only for **superuser**")
 async def create_job(job: JobCreate, session: AsyncSession = Depends(get_async_session),
-                     current_user: UserEmployee = Depends(CURRENT_USER)):
-
-    if not current_user.is_superuser:
-        raise ShiftHTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail=None,
-            sh_status="error",
-            sh_desc=None
-        )
+                     current_user: UserEmployee = Depends(CURRENT_USER_SUPERUSER)):
 
     job_title = job.title.lower()
     job_desc = job.description.lower()
@@ -66,8 +58,9 @@ async def create_job(job: JobCreate, session: AsyncSession = Depends(get_async_s
         )
 
 
-@job_router.patch(path="/{job_id}")
-async def update_Job(job: JobUpdate, job_id: int, session: AsyncSession = Depends(get_async_session)):
+@job_router.patch(path="/{job_id}", description="Update a stored job in database. Only for **superuser**")
+async def update_job(job: JobUpdate, job_id: int, session: AsyncSession = Depends(get_async_session),
+                     current_user: UserEmployee = Depends(CURRENT_USER_SUPERUSER)):
     # query = select(JobModel).where(JobModel.id == job_id)
     # result = await session.execute(query)
     # await session.commit()
@@ -134,8 +127,9 @@ async def update_Job(job: JobUpdate, job_id: int, session: AsyncSession = Depend
     # }
 
 
-@job_router.delete(path="/{job_id}")
-async def delete_job(job_id: int, session: AsyncSession = Depends(get_async_session)):
+@job_router.delete(path="/{job_id}", description="Delete stored job from database. Only for **superuser**")
+async def delete_job(job_id: int, session: AsyncSession = Depends(get_async_session),
+                     current_user: UserEmployee = Depends(CURRENT_USER_SUPERUSER)):
     pre_delete_data = await store_exact_data_from_db(
         row_id=job_id,
         base_model=JobModel,
@@ -178,8 +172,9 @@ async def delete_job(job_id: int, session: AsyncSession = Depends(get_async_sess
         )
 
 
-@job_router.get(path="/all/")
-async def get_jobs(limit: int, offset: int, session: AsyncSession = Depends(get_async_session)):
+@job_router.get(path="/all/", description="Get a list of stored jobs from the database. Only for **superuser**")
+async def get_jobs(limit: int, offset: int, session: AsyncSession = Depends(get_async_session),
+                   current_user: UserEmployee = Depends(CURRENT_USER_SUPERUSER)):
     stored_data = await store_data_from_db(
         limit=limit,
         offset=offset,
@@ -196,8 +191,9 @@ async def get_jobs(limit: int, offset: int, session: AsyncSession = Depends(get_
     )
 
 
-@job_router.get(path="/{job_id}")
-async def get_job(job_id: int, session: AsyncSession = Depends(get_async_session)):
+@job_router.get(path="/{job_id}", description="Get stored job from database. Only for **superuser**")
+async def get_job(job_id: int, session: AsyncSession = Depends(get_async_session),
+                  current_user: UserEmployee = Depends(CURRENT_USER_SUPERUSER)):
     stored_data = await store_exact_data_from_db(
         row_id=job_id,
         base_model=JobModel,

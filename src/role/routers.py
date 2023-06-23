@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from src.response import ShiftHTTPException
+from src.exceptions import ShiftHTTPException
 from src.database import get_async_session, store_exact_data_from_db, store_data_from_db
 from src.role.models import Role as RoleModel
 from src.role.schemas import RoleCreate as RoleCreateScheme, RoleUpdate, RoleRead
