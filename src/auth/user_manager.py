@@ -11,7 +11,7 @@ from starlette.responses import Response
 from src.config import SECRET, TOKEN_RESET_PASSWORD_LIFETIME, TOKEN_VERIFICATION_LIFETIME
 from src.database import get_user_db, get_async_session, store_exact_data_from_db, async_session_maker
 from src.user_employee.models import UserEmployee
-from src.user_employee.schemas import UserEmployeeCreate, EmployeeRead
+from src.user_employee.schemas import UserEmployeeCreate, UserEmployeeRead
 
 
 class UserManager(IntegerIDMixin, BaseUserManager[UserEmployee, int]):

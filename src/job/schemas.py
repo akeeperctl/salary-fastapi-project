@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 
 class JobRead(BaseModel):
-    id: int
+    id: Optional[int]
     salary: Optional[int]
     title: Optional[str]
     description: Optional[str]

@@ -2,10 +2,34 @@ from datetime import datetime, timedelta
 from typing import Optional
 
 from fastapi_users import schemas
-from pydantic import EmailStr, Field
+from pydantic import EmailStr, Field, BaseModel
 
 
-class EmployeeRead(schemas.BaseUser[int]):
+class EmployeeSalaryRead(BaseModel):
+    salary: Optional[int]
+    last_promotion_utc: Optional[datetime]
+    next_promotion_utc: Optional[datetime]
+
+
+class UserEmployeeRead(schemas.BaseUser[int]):
+    id: Optional[int]
+    # job_id: Optional[int]
+
+    username: Optional[str]
+    firstname: Optional[str]
+    lastname: Optional[str]
+
+    signed_at_utc: Optional[datetime]
+    # last_promotion_utc: Optional[datetime]
+    # next_promotion_utc: Optional[datetime]
+
+    email: Optional[EmailStr]
+    is_active: Optional[bool]
+    is_superuser: Optional[bool]
+    is_verified: Optional[bool]
+
+
+class UserEmployeeReadAddon(schemas.BaseUser[int]):
     id: Optional[int]
     job_id: Optional[int]
 
