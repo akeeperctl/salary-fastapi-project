@@ -39,7 +39,6 @@ class UserManager(IntegerIDMixin, BaseUserManager[UserEmployee, int]):
         print(request.values())
         # todo: сюда добавить значения в БД: signed_at, last_promotion, next_promotion
 
-
     async def on_after_forgot_password(
             self, user: UserEmployee, token: str, request: Optional[Request] = None
     ):
