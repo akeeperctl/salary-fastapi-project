@@ -39,8 +39,6 @@ class UserManager(IntegerIDMixin, BaseUserManager[UserEmployee, int]):
             )
 
     async def on_after_register(self, user: UserEmployee, request: Optional[Request] = None):
-        # todo: сюда добавить значения в БД: signed_at, last_promotion, next_promotion
-
         # TypeError: 'async_generator' object is not an iterator
         # session = await next(get_async_session())
 

@@ -64,3 +64,8 @@ def event_loop():
     yield loop
     loop.close()
     print("\n Call function event_loop close")
+
+
+@pytest.fixture(scope="session")
+def is_super_user():
+    return 1
