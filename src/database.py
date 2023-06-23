@@ -40,7 +40,6 @@ async def store_exact_data_from_db(base_model: Base, base_read: BaseModel, row_i
 
 async def store_data_from_db(base_model: Base, base_read: BaseModel,
                              limit: int, offset: int, session: AsyncSession) -> dict:
-
     query = select(base_model).limit(limit).offset(offset)
     result = await session.execute(query)
     await session.commit()

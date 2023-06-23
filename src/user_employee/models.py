@@ -23,9 +23,9 @@ class UserEmployee(SQLAlchemyBaseUserTable[int], Base):
     firstname: str = Column(String, index=True, nullable=False)
     lastname: str = Column(String, index=True, nullable=False)
 
-    # signed_at: datetime = Column(TIMESTAMP, index=True, nullable=False)
-    # last_promotion: datetime = Column(TIMESTAMP, nullable=False)
-    # next_promotion: datetime = Column(TIMESTAMP, nullable=False)
+    signed_at_utc: datetime = Column(TIMESTAMP, index=True, nullable=True)
+    last_promotion_utc: datetime = Column(TIMESTAMP, nullable=True)
+    next_promotion_utc: datetime = Column(TIMESTAMP, nullable=True)
 
     email: str = Column(String(length=320), unique=True, index=True, nullable=False)
     hashed_password: str = Column(String(length=1024), nullable=False)
