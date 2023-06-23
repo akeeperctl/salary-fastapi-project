@@ -26,7 +26,7 @@ async def create_job(job: JobCreate, session: AsyncSession = Depends(get_async_s
         stmt = insert(JobModel).values(salary=job.salary, title=job_title, description=job_desc)
         await session.execute(stmt)
         await session.commit()
-    except (IntegrityError, UniqueViolationError):
+    except (IntegrityError, UniqueViolationError) as ie:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=jsonable_encoder(
@@ -43,16 +43,26 @@ async def create_job(job: JobCreate, session: AsyncSession = Depends(get_async_s
     new_job: JobModel = result.scalar()
 
     if new_job.title.lower() == job_title:
-        return ShiftAPIResponse(
-            status="success",
-            description="job add completed",
-            data=new_job
+        raise HTTPException(
+            status_code=status.HTTP_201_CREATED,
+            detail=jsonable_encoder(
+                ShiftAPIResponse(
+                    status="success",
+                    description="job add completed",
+                    data=new_job
+                )
+            )
         )
     else:
-        return ShiftAPIResponse(
-            status="error",
-            description="job add uncompleted",
-            data=None
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=jsonable_encoder(
+                ShiftAPIResponse(
+                    status="error",
+                    description="job add uncompleted",
+                    data=None
+                )
+            )
         )
 
 
@@ -103,10 +113,15 @@ async def update_Job(job: JobUpdate, job_id: int, session: AsyncSession = Depend
     )
 
     if not stored_data == updated_data:
-        return ShiftAPIResponse(
-            status="success",
-            description="update complete",
-            data=updated_data
+        raise HTTPException(
+            status_code=status.HTTP_200_OK,
+            detail=jsonable_encoder(
+                ShiftAPIResponse(
+                    status="success",
+                    description="update complete",
+                    data=updated_data
+                )
+            )
         )
     else:
         raise HTTPException(
@@ -133,13 +148,6 @@ async def update_Job(job: JobUpdate, job_id: int, session: AsyncSession = Depend
 
 @job_router.delete(path="/{job_id}")
 async def delete_job(job_id: int, session: AsyncSession = Depends(get_async_session)):
-    # stored_data = await store_exact_data_from_db(
-    #     row_id=job_id,
-    #     base_model=JobModel,
-    #     base_read=JobRead,
-    #     session=session
-    # )
-
     pre_delete_data = await store_exact_data_from_db(
         row_id=job_id,
         base_model=JobModel,
@@ -242,7 +250,7 @@ async def get_job(job_id: int, session: AsyncSession = Depends(get_async_session
         detail=jsonable_encoder(
             ShiftAPIResponse(
                 status="success",
-                description="",
+                description=None,
                 data=stored_data
             )
         )

@@ -1,7 +1,10 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, HTTPException
+from fastapi.encoders import jsonable_encoder
 from sqlalchemy.ext.asyncio import AsyncSession
+from starlette import status
 
 from job.schemas import JobRead
+from src.response import ShiftAPIResponse
 from src.database import get_async_session, store_exact_data_from_db
 from src.job.models import Job
 from src.main_users import CURRENT_USER
@@ -17,7 +20,6 @@ employees_router = APIRouter(
 @employees_router.get(path="/me/salary", summary="Users:Get Salary Info")
 async def get_salary_info(user_employee: UserEmployee = Depends(CURRENT_USER),
                           session: AsyncSession = Depends(get_async_session)):
-    
     stored_user_data = await store_exact_data_from_db(
         base_model=UserEmployee,
         base_read=UserEmployeeReadAddon,
@@ -38,4 +40,13 @@ async def get_salary_info(user_employee: UserEmployee = Depends(CURRENT_USER),
         next_promotion_utc=stored_user_data.get("next_promotion_utc")
     )
 
-    return result
+    raise HTTPException(
+        status_code=status.HTTP_200_OK,
+        detail=jsonable_encoder(
+            ShiftAPIResponse(
+                status="success",
+                description=None,
+                data=result
+            )
+        )
+    )
