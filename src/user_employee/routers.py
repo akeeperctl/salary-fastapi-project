@@ -4,7 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
 from job.schemas import JobRead
-from src.response import ShiftAPIResponse
+from src.exceptions import ShiftHTTPException
 from src.database import get_async_session, store_exact_data_from_db
 from src.job.models import Job
 from src.main_users import CURRENT_USER
@@ -40,13 +40,9 @@ async def get_salary_info(user_employee: UserEmployee = Depends(CURRENT_USER),
         next_promotion_utc=stored_user_data.get("next_promotion_utc")
     )
 
-    raise HTTPException(
+    raise ShiftHTTPException(
         status_code=status.HTTP_200_OK,
-        detail=jsonable_encoder(
-            ShiftAPIResponse(
-                status="success",
-                description=None,
-                data=result
-            )
-        )
+        detail=result,
+        sh_status="success",
+        sh_desc=None
     )

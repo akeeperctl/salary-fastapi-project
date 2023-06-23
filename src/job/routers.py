@@ -6,10 +6,12 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from src.response import ShiftAPIResponse
+from src.main_users import CURRENT_USER
+from src.exceptions import ShiftHTTPException
 from src.database import get_async_session, store_exact_data_from_db, store_data_from_db
 from src.job.models import Job as JobModel
 from src.job.schemas import JobCreate, JobUpdate, JobRead
+from src.user_employee.models import UserEmployee
 
 job_router = APIRouter(
     prefix="/jobs",
@@ -17,8 +19,18 @@ job_router = APIRouter(
 )
 
 
-@job_router.post(path="/add")
-async def create_job(job: JobCreate, session: AsyncSession = Depends(get_async_session)):
+@job_router.post(path="/add", description="Add new job to database. Only for **superuser**")
+async def create_job(job: JobCreate, session: AsyncSession = Depends(get_async_session),
+                     current_user: UserEmployee = Depends(CURRENT_USER)):
+
+    if not current_user.is_superuser:
+        raise ShiftHTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=None,
+            sh_status="error",
+            sh_desc=None
+        )
+
     job_title = job.title.lower()
     job_desc = job.description.lower()
 
@@ -27,15 +39,11 @@ async def create_job(job: JobCreate, session: AsyncSession = Depends(get_async_s
         await session.execute(stmt)
         await session.commit()
     except (IntegrityError, UniqueViolationError) as ie:
-        raise HTTPException(
+        raise ShiftHTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=jsonable_encoder(
-                ShiftAPIResponse(
-                    status="error",
-                    description=f"job with title: {job_title} already created",
-                    data=None
-                )
-            )
+            detail=None,
+            sh_status="error",
+            sh_desc=f"job with title: {job_title} already created"
         )
 
     query = select(JobModel).where(JobModel.title == job_title)
@@ -43,26 +51,18 @@ async def create_job(job: JobCreate, session: AsyncSession = Depends(get_async_s
     new_job: JobModel = result.scalar()
 
     if new_job.title.lower() == job_title:
-        raise HTTPException(
+        raise ShiftHTTPException(
             status_code=status.HTTP_201_CREATED,
-            detail=jsonable_encoder(
-                ShiftAPIResponse(
-                    status="success",
-                    description="job add completed",
-                    data=new_job
-                )
-            )
+            detail=new_job,
+            sh_status="success",
+            sh_desc="job add completed"
         )
     else:
-        raise HTTPException(
+        raise ShiftHTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=jsonable_encoder(
-                ShiftAPIResponse(
-                    status="error",
-                    description="job add uncompleted",
-                    data=None
-                )
-            )
+            detail=None,
+            sh_status="error",
+            sh_desc="job add uncompleted"
         )
 
 
@@ -82,15 +82,11 @@ async def update_Job(job: JobUpdate, job_id: int, session: AsyncSession = Depend
     )
 
     if stored_data is None:
-        raise HTTPException(
+        raise ShiftHTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=jsonable_encoder(
-                ShiftAPIResponse(
-                    status="error",
-                    description=f"job with id: {job_id} not found",
-                    data=None
-                )
-            )
+            detail=None,
+            sh_status="error",
+            sh_desc=f"job with id: {job_id} not found"
         )
 
     stmt = update(JobModel). \
@@ -113,26 +109,18 @@ async def update_Job(job: JobUpdate, job_id: int, session: AsyncSession = Depend
     )
 
     if not stored_data == updated_data:
-        raise HTTPException(
+        raise ShiftHTTPException(
             status_code=status.HTTP_200_OK,
-            detail=jsonable_encoder(
-                ShiftAPIResponse(
-                    status="success",
-                    description="update complete",
-                    data=updated_data
-                )
-            )
+            detail=updated_data,
+            sh_status="success",
+            sh_desc="update complete"
         )
     else:
-        raise HTTPException(
+        raise ShiftHTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=jsonable_encoder(
-                ShiftAPIResponse(
-                    status="error",
-                    description="update not completed",
-                    data=None
-                )
-            )
+            detail=None,
+            sh_status="error",
+            sh_desc="update not completed"
         )
 
     # debug info
@@ -156,15 +144,11 @@ async def delete_job(job_id: int, session: AsyncSession = Depends(get_async_sess
     )
 
     if pre_delete_data is None:
-        raise HTTPException(
+        raise ShiftHTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=jsonable_encoder(
-                ShiftAPIResponse(
-                    status="error",
-                    description=f"job with id: {job_id} not found",
-                    data=None
-                )
-            )
+            detail=None,
+            sh_status="error",
+            sh_desc=f"job with id: {job_id} not found"
         )
 
     stmt = delete(JobModel).where(JobModel.id == job_id)
@@ -179,26 +163,18 @@ async def delete_job(job_id: int, session: AsyncSession = Depends(get_async_sess
     )
 
     if stored_data is None:
-        raise HTTPException(
+        raise ShiftHTTPException(
             status_code=status.HTTP_200_OK,
-            detail=jsonable_encoder(
-                ShiftAPIResponse(
-                    status="success",
-                    description=f"job with id: {job_id} deleted",
-                    data=None
-                )
-            )
+            detail=None,
+            sh_status="success",
+            sh_desc=f"job with id: {job_id} deleted"
         )
     else:
-        raise HTTPException(
+        raise ShiftHTTPException(
             status_code=status.HTTP_202_ACCEPTED,
-            detail=jsonable_encoder(
-                ShiftAPIResponse(
-                    status="error",
-                    description=f"job with id: {job_id} not deleted",
-                    data=None
-                )
-            )
+            detail=None,
+            sh_status="error",
+            sh_desc=f"job with id: {job_id} not deleted"
         )
 
 
@@ -212,15 +188,11 @@ async def get_jobs(limit: int, offset: int, session: AsyncSession = Depends(get_
         session=session
     )
 
-    raise HTTPException(
+    raise ShiftHTTPException(
         status_code=status.HTTP_200_OK,
-        detail=jsonable_encoder(
-            ShiftAPIResponse(
-                status="success",
-                description="",
-                data=stored_data
-            )
-        )
+        detail=stored_data,
+        sh_status="success",
+        sh_desc=None
     )
 
 
@@ -234,24 +206,16 @@ async def get_job(job_id: int, session: AsyncSession = Depends(get_async_session
     )
 
     if stored_data is None:
-        raise HTTPException(
+        raise ShiftHTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=jsonable_encoder(
-                ShiftAPIResponse(
-                    status="error",
-                    description=f"job with id: {job_id} not found",
-                    data=None
-                )
-            )
+            detail=None,
+            sh_status="error",
+            sh_desc=f"job with id: {job_id} not found"
         )
 
-    raise HTTPException(
+    raise ShiftHTTPException(
         status_code=status.HTTP_200_OK,
-        detail=jsonable_encoder(
-            ShiftAPIResponse(
-                status="success",
-                description=None,
-                data=stored_data
-            )
-        )
+        detail=stored_data,
+        sh_status="success",
+        sh_desc=None
     )
