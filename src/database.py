@@ -1,4 +1,4 @@
-from typing import AsyncGenerator
+from typing import AsyncGenerator, Any
 
 from fastapi import Depends
 from fastapi.encoders import jsonable_encoder
@@ -28,7 +28,7 @@ async def get_user_db(session: AsyncSession = Depends(get_async_session)):
     yield SQLAlchemyUserDatabase(session, UserEmployee)
 
 
-async def store_exact_data_from_db(base_model: Base, base_read: BaseModel, row_id: int, session: AsyncSession) -> dict:
+async def store_exact_data_from_db(base_model: Base | Any, base_read: BaseModel | Any, row_id: int, session: AsyncSession) -> dict:
     query = select(base_model).where(base_model.id == row_id)
     result = await session.execute(query)
     await session.commit()
@@ -38,7 +38,7 @@ async def store_exact_data_from_db(base_model: Base, base_read: BaseModel, row_i
     return stored_data
 
 
-async def store_data_from_db(base_model: Base, base_read: BaseModel,
+async def store_data_from_db(base_model: Base | Any, base_read: BaseModel | Any,
                              limit: int, offset: int, session: AsyncSession) -> dict:
     query = select(base_model).limit(limit).offset(offset)
     result = await session.execute(query)
