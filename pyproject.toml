@@ -1,3 +1,12 @@
+[tool.pytest.ini_options]
+# относительно root(папки с проектом)
+# добавляются директории
+# . - текущая директория root (отсутствует при pytest)
+# src - директория с исходниками (тоже отсутствует при pytest)
+# присутствует только директория tests
+pythonpath = [".", "src"]
+asyncio_mode="auto" # auto, strict
+
 [tool.poetry]
 name = "shift-fastapi-project"
 version = "0.1.0"
