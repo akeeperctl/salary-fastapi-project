@@ -13,7 +13,6 @@ class EmployeeRead(schemas.BaseUser[int]):
 
     id: Optional[int]
     job_id: Optional[int]
-    role_id: Optional[int]
 
     username: Optional[str]
     firstname: Optional[str]
@@ -33,7 +32,6 @@ class UserEmployeeCreate(schemas.BaseUserCreate):
     # id: int = Field()
 
     job_id: int
-    role_id: int
 
     username: str = Field(min_length=3, max_length=10)
     firstname: str = Field(min_length=3, max_length=15)
@@ -53,7 +51,6 @@ class UserEmployeeCreate(schemas.BaseUserCreate):
 class UserEmployeeUpdate(schemas.BaseUserUpdate):
     id: int
     job_id: Optional[int]
-    role_id: Optional[int]
 
     username: Optional[str] = Field(min_length=3, max_length=10)
     firstname: Optional[str] = Field(min_length=3, max_length=15)

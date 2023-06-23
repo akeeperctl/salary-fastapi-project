@@ -7,8 +7,7 @@ from alembic import context
 
 from src.config import DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASS
 from src.models import Base
-from src.auth.models import Employee
-from src.role.models import Role
+from src.user_employee.models import UserEmployee
 from src.job.models import Job
 
 # this is the Alembic Config object, which provides

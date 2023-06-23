@@ -17,7 +17,7 @@ class UserEmployee(SQLAlchemyBaseUserTable[int], Base):
     job_id: int = Column(Integer, ForeignKey(Job.id), index=True, nullable=False)
 
     # Может содержать: Админ, пользователь и т.д
-    role_id: int = Column(Integer, ForeignKey(Role.id), index=True, nullable=False)
+    # role_id: int = Column(Integer, ForeignKey(Role.id), index=True, nullable=False)
 
     username: str = Column(String, index=True, nullable=False)
     firstname: str = Column(String, index=True, nullable=False)
