@@ -6,7 +6,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from response import ShiftAPIResponse
+from src.response import ShiftAPIResponse
 from src.database import get_async_session, store_exact_data_from_db, store_data_from_db
 from src.job.models import Job as JobModel
 from src.job.schemas import JobCreate, JobUpdate, JobRead
