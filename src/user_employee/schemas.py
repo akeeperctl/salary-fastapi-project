@@ -13,15 +13,12 @@ class EmployeeSalaryRead(BaseModel):
 
 class UserEmployeeRead(schemas.BaseUser[int]):
     id: Optional[int]
-    # job_id: Optional[int]
 
     username: Optional[str]
     firstname: Optional[str]
     lastname: Optional[str]
 
     signed_at_utc: Optional[datetime]
-    # last_promotion_utc: Optional[datetime]
-    # next_promotion_utc: Optional[datetime]
 
     email: Optional[EmailStr]
     is_active: Optional[bool]
@@ -48,8 +45,6 @@ class UserEmployeeReadAddon(schemas.BaseUser[int]):
 
 
 class UserEmployeeCreate(schemas.BaseUserCreate):
-    # id: int = Field()
-
     job_id: int
 
     username: str = Field(min_length=3, max_length=10)

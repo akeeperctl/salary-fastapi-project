@@ -4,7 +4,6 @@ from fastapi_users_db_sqlalchemy import SQLAlchemyBaseUserTable
 from sqlalchemy import Column, String, Boolean, Integer, ForeignKey, TIMESTAMP
 
 from src.job.models import Job
-from src.role.models import Role
 from src.models import Base
 
 
@@ -19,7 +18,7 @@ class UserEmployee(SQLAlchemyBaseUserTable[int], Base):
     # Может содержать: Админ, пользователь и т.д
     # role_id: int = Column(Integer, ForeignKey(Role.id), index=True, nullable=False)
 
-    username: str = Column(String, index=True, nullable=False)
+    username: str = Column(String, index=True, nullable=False, unique=True)
     firstname: str = Column(String, index=True, nullable=False)
     lastname: str = Column(String, index=True, nullable=False)
 
