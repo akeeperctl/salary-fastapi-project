@@ -53,11 +53,12 @@ async def test_server_create_job():
             values(**CREATED_JOB)
 
         await session.execute(stmt)
-        await session.commit()
+        # await session.commit()
 
         query = select(Job).where(Job.title == CREATED_JOB["title"])
         result = await session.execute(query)
         await session.commit()
+
         stored_model: JobRead = result.scalar()
         stored_data: dict = jsonable_encoder(stored_model)
 
@@ -111,7 +112,7 @@ async def test_register_user(ac: AsyncClient, is_super_user):
             next_promotion_utc=next_promotion
         )
         await session.execute(stmt)
-        await session.commit()
+        # await session.commit()
 
         stmt = update(UserEmployee). \
             where(UserEmployee.username == CREATED_USER2.get("username")). \
@@ -132,11 +133,12 @@ async def test_register_user(ac: AsyncClient, is_super_user):
                 values(is_superuser=True)
 
             await session.execute(stmt)
-            await session.commit()
+            # await session.commit()
 
             query = select(UserEmployee).where(UserEmployee.username == CREATED_USER.get("username"))
             result = await session.execute(query)
             await session.commit()
+
             stored_model: UserEmployeeRead = result.scalar()
             stored_user: dict = jsonable_encoder(stored_model)
 
