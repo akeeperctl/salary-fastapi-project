@@ -8,7 +8,7 @@ from src.role.models import Role
 from src.models import Base
 
 
-class Employee(SQLAlchemyBaseUserTable[int], Base):
+class UserEmployee(SQLAlchemyBaseUserTable[int], Base):
     __tablename__ = "employee"
 
     id: int = Column(Integer, primary_key=True, autoincrement=True)

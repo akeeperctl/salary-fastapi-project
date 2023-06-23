@@ -5,7 +5,7 @@ from fastapi_users import schemas
 from pydantic import EmailStr, Field
 
 
-#utcnow = datetime.utcnow().isoformat(sep='_', timespec='minutes')
+# utcnow = datetime.utcnow().isoformat(sep='_', timespec='minutes')
 utcnow = datetime.utcnow()
 
 
@@ -29,7 +29,7 @@ class EmployeeRead(schemas.BaseUser[int]):
     is_verified: Optional[bool]
 
 
-class EmployeeCreate(schemas.BaseUserCreate):
+class UserEmployeeCreate(schemas.BaseUserCreate):
     # id: int = Field()
 
     job_id: int
@@ -50,7 +50,7 @@ class EmployeeCreate(schemas.BaseUserCreate):
     is_verified: Optional[bool] = False
 
 
-class UserUpdate(schemas.BaseUserUpdate):
+class UserEmployeeUpdate(schemas.BaseUserUpdate):
     id: int
     job_id: Optional[int]
     role_id: Optional[int]
