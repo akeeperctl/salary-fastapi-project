@@ -1,4 +1,5 @@
 import time
+from pprint import pprint
 
 from fastapi import FastAPI, Depends
 from fastapi.encoders import jsonable_encoder
@@ -58,21 +59,23 @@ async def on_app_start():
     FastAPICache.init(RedisBackend(REDIS_INSTANCE), prefix="fastapi-cache")
 
     if CREATE_PLUG_JOB == "True":
-        async with async_session_maker() as session:
-            title = "заглушка"
-
-            # check
-            query = select(Job).where(Job.title == title)
-            result = await session.execute(query)
-            await session.commit()
-
-            stored_model: JobRead = result.scalar()
-            stored_job: dict = jsonable_encoder(stored_model)
-
-            if stored_job is None:
-                stmt = insert(Job).values(salary=15000, title=title, description="заглушка")
-                await session.execute(stmt)
+        try:
+            async with async_session_maker() as session:
+                title = "заглушка"
+                # check
+                query = select(Job).where(Job.title == title)
+                result = await session.execute(query)
                 await session.commit()
+
+                stored_model: JobRead = result.scalar()
+                stored_job: dict = jsonable_encoder(stored_model)
+
+                if stored_job is None:
+                    stmt = insert(Job).values(salary=15000, title=title, description="заглушка")
+                    await session.execute(stmt)
+                    await session.commit()
+        except Exception as e:
+            pprint("Plug job can not be created. Database not connected")
     #
     # # get
     # query = select(Job).where(Job.title == title)
