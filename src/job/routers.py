@@ -1,6 +1,8 @@
 from asyncpg import UniqueViolationError
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
+from fastapi_cache import JsonCoder
+from fastapi_cache.decorator import cache
 from sqlalchemy import insert, select, update, delete
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -173,6 +175,7 @@ async def delete_job(job_id: int, session: AsyncSession = Depends(get_async_sess
 
 
 @job_router.get(path="/all/", description="Get a list of stored jobs from the database. Only for **superuser**")
+@cache(expire=60, coder=JsonCoder)
 async def get_jobs(limit: int, offset: int, session: AsyncSession = Depends(get_async_session),
                    current_user: UserEmployee = Depends(CURRENT_USER_SUPERUSER)):
     stored_data = await store_data_from_db(
@@ -192,6 +195,7 @@ async def get_jobs(limit: int, offset: int, session: AsyncSession = Depends(get_
 
 
 @job_router.get(path="/{job_id}", description="Get stored job from database. Only for **superuser**")
+@cache(expire=60, coder=JsonCoder)
 async def get_job(job_id: int, session: AsyncSession = Depends(get_async_session),
                   current_user: UserEmployee = Depends(CURRENT_USER_SUPERUSER)):
     stored_data = await store_exact_data_from_db(

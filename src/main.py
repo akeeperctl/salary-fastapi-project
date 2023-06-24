@@ -1,15 +1,12 @@
 from fastapi import FastAPI
-from fastapi_users import FastAPIUsers
 from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
 
-from src.main_users import app_users
-from src.user_employee.schemas import UserEmployeeRead, UserEmployeeCreate
-from src.role.routers import role_router
-from src.user_employee.routers import employees_router
-from src.auth.auth import auth_backend
-from src.auth.user_manager import get_user_manager
-
+from src.auth.auth import auth_backend, REDIS_INSTANCE
 from src.job.routers import job_router
+from src.main_users import app_users
+from src.user_employee.routers import employees_router
+from src.user_employee.schemas import UserEmployeeRead, UserEmployeeCreate
 
 app = FastAPI(title="Shift Python Project")
 
@@ -35,9 +32,9 @@ app.include_router(
 )
 
 app.include_router(job_router)
-app.include_router(role_router)
 app.include_router(employees_router)
 
-# @app.on_event("startup")
-# async def on_startup():
-#     app_cache.init()
+
+@app.on_event("startup")
+async def on_app_start():
+    FastAPICache.init(RedisBackend(REDIS_INSTANCE), prefix="fastapi-cache")

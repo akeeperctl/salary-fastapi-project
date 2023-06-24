@@ -1,5 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.encoders import jsonable_encoder
+from fastapi_cache import JsonCoder
+from fastapi_cache.decorator import cache
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
@@ -18,6 +20,7 @@ employees_router = APIRouter(
 
 
 @employees_router.get(path="/me/salary", summary="Users:Get Salary Info")
+@cache(expire=60, coder=JsonCoder)
 async def get_salary_info(user_employee: UserEmployee = Depends(CURRENT_USER),
                           session: AsyncSession = Depends(get_async_session)):
     stored_user_data = await store_exact_data_from_db(

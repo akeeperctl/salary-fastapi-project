@@ -2,10 +2,13 @@ import asyncio
 from typing import AsyncGenerator
 
 import pytest
+from fastapi_cache import FastAPICache
+from fastapi_cache.backends.redis import RedisBackend
 from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, AsyncEngine
 from sqlalchemy.orm import sessionmaker
 
+from auth.auth import REDIS_INSTANCE
 from src.config import DB_USER_TEST, DB_PASS_TEST, DB_HOST_TEST, DB_NAME_TEST
 from src.database import get_async_session
 from src.main import app
@@ -42,9 +45,14 @@ app.dependency_overrides[get_async_session] = override_get_async_session
 # Фикстура подготовки базы данных перед тестом
 @pytest.fixture(autouse=True, scope="session")
 async def prepare_database():
+
+    FastAPICache.init(RedisBackend(REDIS_INSTANCE), prefix="fastapi-cache-test")
     async with engine_test.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
     yield
+
+    FastAPICache.reset()
     async with engine_test.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
 
