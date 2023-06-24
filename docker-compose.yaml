@@ -13,13 +13,16 @@ services:
     container_name: redis_shift_app
     env_file:
       - .env-non-dev
+    ports:
+      - "6380:6379"
 
   app:
     build:
       context: .
     container_name: shift_app
-    command: >
-      sh -c "gunicorn src.main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000"
+    command: > 
+      sh -c "alembic upgrade head && 
+              gunicorn src.main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000"
     ports:
       - "3000:8000"
     env_file:
