@@ -1,0 +1,30 @@
+version: "3.7"
+services:
+  db:
+    image: postgres:15.3
+    container_name: db_shift_app
+    env_file:
+      - .env-non-dev
+    ports:
+      - "5433:5432"
+
+  redis:
+    image: redis:7.0.11
+    container_name: redis_shift_app
+    env_file:
+      - .env-non-dev
+
+  app:
+    build:
+      context: .
+    container_name: shift_app
+    command: >
+      sh -c "gunicorn src.main:app --workers 1 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:8000"
+    ports:
+      - "3000:8000"
+    env_file:
+      - .env-non-dev
+    depends_on:
+      - redis
+      - db
+
