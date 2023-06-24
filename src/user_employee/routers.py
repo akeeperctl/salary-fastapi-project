@@ -5,7 +5,7 @@ from fastapi_cache.decorator import cache
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from job.schemas import JobRead
+from src.job.schemas import JobRead
 from src.exceptions import ShiftHTTPException
 from src.database import get_async_session, store_exact_data_from_db
 from src.job.models import Job

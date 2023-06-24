@@ -21,6 +21,7 @@ def upgrade() -> None:
     op.drop_index('ix_employee_role_id', table_name='employee')
     op.drop_constraint('employee_role_id_fkey', 'employee', type_='foreignkey')
     op.drop_column('employee', 'role_id')
+    op.drop_table('role')
     # ### end Alembic commands ###
 
 

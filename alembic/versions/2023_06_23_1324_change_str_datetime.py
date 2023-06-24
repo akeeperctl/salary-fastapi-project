@@ -20,15 +20,18 @@ def upgrade() -> None:
     op.alter_column('employee', 'signed_at',
                     existing_type=sa.VARCHAR(),
                     type_=sa.TIMESTAMP(),
-                    existing_nullable=True)
+                    existing_nullable=True,
+                    postgresql_using='signed_at::timestamp')
     op.alter_column('employee', 'last_promotion',
                     existing_type=sa.VARCHAR(),
                     type_=sa.TIMESTAMP(),
-                    existing_nullable=True)
+                    existing_nullable=True,
+                    postgresql_using='signed_at::timestamp')
     op.alter_column('employee', 'next_promotion',
                     existing_type=sa.VARCHAR(),
                     type_=sa.TIMESTAMP(),
-                    existing_nullable=True)
+                    existing_nullable=True,
+                    postgresql_using='signed_at::timestamp')
     # ### end Alembic commands ###
 
 
