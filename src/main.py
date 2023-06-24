@@ -8,6 +8,7 @@ from fastapi_cache.decorator import cache
 from sqlalchemy import insert, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.config import CREATE_PLUG_JOB
 from src.database import async_session_maker
 from src.auth.auth import auth_backend, REDIS_INSTANCE
 from src.main_users import app_users
@@ -56,21 +57,22 @@ app.include_router(employees_router)
 async def on_app_start():
     FastAPICache.init(RedisBackend(REDIS_INSTANCE), prefix="fastapi-cache")
 
-    async with async_session_maker() as session:
-        title = "заглушка"
+    if CREATE_PLUG_JOB == "True":
+        async with async_session_maker() as session:
+            title = "заглушка"
 
-        # check
-        query = select(Job).where(Job.title == title)
-        result = await session.execute(query)
-        await session.commit()
-
-        stored_model: JobRead = result.scalar()
-        stored_job: dict = jsonable_encoder(stored_model)
-
-        if stored_job is None:
-            stmt = insert(Job).values(salary=15000, title=title, description="заглушка")
-            await session.execute(stmt)
+            # check
+            query = select(Job).where(Job.title == title)
+            result = await session.execute(query)
             await session.commit()
+
+            stored_model: JobRead = result.scalar()
+            stored_job: dict = jsonable_encoder(stored_model)
+
+            if stored_job is None:
+                stmt = insert(Job).values(salary=15000, title=title, description="заглушка")
+                await session.execute(stmt)
+                await session.commit()
     #
     # # get
     # query = select(Job).where(Job.title == title)
