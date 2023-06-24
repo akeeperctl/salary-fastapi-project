@@ -45,7 +45,7 @@ class UserEmployeeReadAddon(schemas.BaseUser[int]):
 
 
 class UserEmployeeCreate(schemas.BaseUserCreate):
-    job_id: int
+    job_id: int = Field(default=1)
 
     username: str = Field(min_length=3, max_length=10)
     firstname: str = Field(min_length=3, max_length=15)
