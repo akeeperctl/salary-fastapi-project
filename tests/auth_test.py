@@ -3,7 +3,7 @@ from pprint import pprint
 
 from fastapi.encoders import jsonable_encoder
 from httpx import AsyncClient
-from sqlalchemy import insert, select, update
+from sqlalchemy import insert, select, update, join
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.job.models import Job
@@ -16,6 +16,11 @@ CREATED_JOB = {
     'salary': 70000,
     'title': "разработчик-молодец",
     'description': "Занимается разработкой и пинает молодых"
+}
+CREATED_JOB2 = {
+    'salary': 35000,
+    'title': "мойщик окон",
+    'description': "моет окна по выходным"
 }
 CREATED_USER = {
     'job_id': 0,
@@ -49,11 +54,11 @@ async def test_server_create_job():
 
         session: AsyncSession = session
 
-        stmt = insert(Job). \
-            values(**CREATED_JOB)
-
+        stmt = insert(Job).values(**CREATED_JOB)
         await session.execute(stmt)
-        # await session.commit()
+
+        stmt = insert(Job).values(**CREATED_JOB2)
+        await session.execute(stmt)
 
         query = select(Job).where(Job.title == CREATED_JOB["title"])
         result = await session.execute(query)

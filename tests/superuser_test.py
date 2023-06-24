@@ -1,3 +1,5 @@
+from pprint import pprint
+
 from httpx import AsyncClient
 from starlette import status
 
@@ -107,4 +109,16 @@ async def test_get_all_jobs(ac: AsyncClient):
         }
     )
 
+    pprint(response.json())
     assert response.status_code == status.HTTP_200_OK, "Не получил список работы"
+
+
+async def test_delete_job(ac: AsyncClient):
+    response = await ac.delete(
+        url="jobs/2",
+        headers={
+            "Authorization": "Bearer " + TEST_VALUE_SAVER.values.get("ACCESS_TOKEN")
+        }
+    )
+
+    assert response.status_code == status.HTTP_200_OK, "Не удалил рабочее место"
