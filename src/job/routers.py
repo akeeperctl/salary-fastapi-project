@@ -1,6 +1,5 @@
 from asyncpg import UniqueViolationError
-from fastapi import APIRouter, Depends, HTTPException
-from fastapi.encoders import jsonable_encoder
+from fastapi import APIRouter, Depends
 from fastapi_cache import JsonCoder
 from fastapi_cache.decorator import cache
 from sqlalchemy import insert, select, update, delete
@@ -8,11 +7,11 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 from starlette import status
 
-from src.main_users import CURRENT_USER, CURRENT_USER_SUPERUSER
-from src.exceptions import ShiftHTTPException
 from src.database import get_async_session, store_exact_data_from_db, store_data_from_db
+from src.exceptions import ShiftHTTPException
 from src.job.models import Job as JobModel
 from src.job.schemas import JobCreate, JobUpdate, JobRead
+from src.main_users import CURRENT_USER_SUPERUSER
 from src.user_employee.models import UserEmployee
 
 job_router = APIRouter(
@@ -32,7 +31,7 @@ async def create_job(job: JobCreate, session: AsyncSession = Depends(get_async_s
         stmt = insert(JobModel).values(salary=job.salary, title=job_title, description=job_desc)
         await session.execute(stmt)
         await session.commit()
-    except (IntegrityError, UniqueViolationError) as ie:
+    except (IntegrityError, UniqueViolationError):
         raise ShiftHTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=None,

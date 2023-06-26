@@ -1,16 +1,15 @@
 from datetime import datetime, timedelta
-from pprint import pprint
 
 from fastapi.encoders import jsonable_encoder
 from httpx import AsyncClient
-from sqlalchemy import insert, select, update, join
+from sqlalchemy import insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from src.job.models import Job
 from src.job.schemas import JobRead
-from tests.conftest import async_session_maker_test, TEST_VALUE_SAVER
 from src.user_employee.models import UserEmployee
 from src.user_employee.schemas import UserEmployeeRead
+from tests.conftest import async_session_maker_test, TEST_VALUE_SAVER
 
 CREATED_JOB = {
     'salary': 70000,
