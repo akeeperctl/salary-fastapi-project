@@ -50,6 +50,7 @@ ACCESS_TOKEN: str = ""
 async def test_server_create_job():
     async with async_session_maker_test() as session:
         global CREATED_JOB
+        global CREATED_JOB2
 
         session: AsyncSession = session
 
