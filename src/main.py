@@ -1,24 +1,20 @@
-import time
 from pprint import pprint
 
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from fastapi.encoders import jsonable_encoder
-from fastapi_cache import FastAPICache, JsonCoder
+from fastapi_cache import FastAPICache
 from fastapi_cache.backends.redis import RedisBackend
-from fastapi_cache.decorator import cache
 from sqlalchemy import insert, select
-from sqlalchemy.ext.asyncio import AsyncSession
 
+from src.auth.auth import auth_backend, REDIS_INSTANCE
 from src.config import CREATE_PLUG_JOB
 from src.database import async_session_maker
-from src.auth.auth import auth_backend, REDIS_INSTANCE
+from src.job.models import Job
+from src.job.routers import job_router
+from src.job.schemas import JobRead
 from src.main_users import app_users
 from src.user_employee.routers import employees_router
 from src.user_employee.schemas import UserEmployeeRead, UserEmployeeCreate
-from src.user_employee.models import UserEmployee
-from src.job.routers import job_router
-from src.job.schemas import JobRead
-from src.job.models import Job
 
 app = FastAPI(title="Shift Python Project")
 
